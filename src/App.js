@@ -6,6 +6,7 @@ import CVForm from './components/CVForm';
 import CVList from './components/CVList';
 import CVEdit from './components/CVEdit';
 import CVView from './components/CVView';
+import CVCreation from './components/CVCreation';
 
 const App = () => {
   const handleFormSubmit = (data) => {
@@ -18,10 +19,11 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/cv-creation" element={<CVCreation />} />
           <Route path="/cv-form" element={<CVForm onSubmit={handleFormSubmit} />} />
           <Route path="/cv-list" element={<CVList />} />
           <Route path="/cv-view/:id" element={<CVView />} />
-          <Route path="/cv/edit/:id" element={<CVEdit />} />
+          <Route path="/cv-edit/:id" element={<CVEdit />} />
         </Routes>
       </div>
     </Router>

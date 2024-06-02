@@ -35,7 +35,7 @@ const CVForm = ({ onSubmit, initialData = {} }) => {
         employeeStatus: employmentStatus,
         isAgreedToTermsAndConditions: termsAccepted,
         preferedLanguages: preferredLanguages,
-        workExpirenece: workExperience.map(exp => ({
+        workExperience: workExperience.map(exp => ({
           workingPlaceName: exp.place,
           workingPlaceAddress: exp.address,
           numberOfExpirence: parseInt(exp.experience, 10),
@@ -60,14 +60,27 @@ const CVForm = ({ onSubmit, initialData = {} }) => {
     if (!lastName) newErrors.lastName = 'Last name is required';
     if (!age || age < 0) newErrors.age = 'Age is required and cannot be lower than 0';
     if (!address) newErrors.address = 'Address is required';
-    if (!phoneNumber) newErrors.phoneNumber = 'Phone number is required';
+    if (!phoneNumber || !/^\+?\d+$/.test(phoneNumber)) newErrors.phoneNumber = 'Invalid phone number';
     if (!preferredLanguages.length) newErrors.preferredLanguages = 'Preferred languages are required';
     if (!workExperience.length || workExperience.some(exp => !exp.place || !exp.address || !exp.experience || !exp.periodType)) {
       newErrors.workExperience = 'All work experience fields are required';
     }
+  
+    if (dateOfBirth) {
+      const birthYear = dateOfBirth.getFullYear();
+      const currentYear = new Date().getFullYear();
+      const calculatedAge = currentYear - birthYear;
+      if (age !== calculatedAge.toString()) {
+        newErrors.age = 'Age does not match the date of birth';
+      }
+    } else {
+      newErrors.age = 'Date of birth is required to calculate age';
+    }
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
 
   const clearForm = () => {
     setFirstName('');

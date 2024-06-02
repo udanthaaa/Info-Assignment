@@ -29,7 +29,7 @@ const CVView = () => {
       <p><strong>Preferred Languages:</strong> {cv.preferedLanguages.join(', ')}</p>
       <h3>Work Experience</h3>
       <ul>
-        {cv.workExpirenece.map((exp, index) => (
+        {cv.workExperience.map((exp, index) => (
           <li key={index}>
             <p><strong>Place:</strong> {exp.workingPlaceName}</p>
             <p><strong>Address:</strong> {exp.workingPlaceAddress}</p>
