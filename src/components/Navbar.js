@@ -1,16 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Navbar = () => {
-  return (
-    <nav>
-      <ul>
-        <li><Link to="/">Dashboard</Link></li>
-        <li><Link to="/cv">CV List</Link></li>
-        <li><Link to="/cv/create">Create CV</Link></li>
-      </ul>
-    </nav>
-  );
-};
+const Navbar = () => (
+  <nav>
+    <ul>
+      <li><Link to="/dashboard">Dashboard</Link></li>
+      <li><Link to="/cv-form">Create CV</Link></li>
+      <li><Link to="/cv-list">View CVs</Link></li>
+    </ul>
+  </nav>
+);
 
 export default Navbar;
