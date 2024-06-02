@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Dashboard from './components/Dashboard';
+import CVList from './components/CVList';
+import CVCreation from './components/CVCreation';
+import CVView from './components/CVView';
+import CVEdit from './components/CVEdit';
+import Navbar from './components/Navbar';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/cv" element={<CVList />} />
+          <Route path="/cv/create" element={<CVCreation />} />
+          <Route path="/cv/view/:id" element={<CVView />} />
+          <Route path="/cv/edit/:id" element={<CVEdit />} />
+        </Routes>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
