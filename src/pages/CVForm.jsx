@@ -1,9 +1,9 @@
-import React from 'react';
-import Select from 'react-select';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import './Styles/CVForm.css';
-import Switch from 'react-switch';
+import React from 'react'; // Importing React
+import Select from 'react-select'; // Importing react-select for dropdowns
+import DatePicker from 'react-datepicker'; // Importing react-datepicker for date selection
+import 'react-datepicker/dist/react-datepicker.css'; // Importing CSS for date picker
+import './Styles/CVForm.css'; // Importing custom CSS for the form
+import Switch from 'react-switch'; // Importing Switch component for toggle
 
 const CVForm = ({
   initialData,
@@ -13,28 +13,34 @@ const CVForm = ({
   setInitialData,
   currentColor
 }) => {
+
+  // Function to handle changes to form fields
   const handleChange = (field, value) => {
     setInitialData(prevData => ({ ...prevData, [field]: value }));
   };
 
+  // Function to handle changes in work experience fields
   const handleWorkExperienceChange = (index, field, value) => {
     const updatedWorkExperience = [...initialData.workExperience];
     updatedWorkExperience[index][field] = value;
     handleChange('workExperience', updatedWorkExperience);
   };
 
+  // Function to add a new work experience entry
   const addWorkExperience = () => {
     handleChange('workExperience', [...initialData.workExperience, { place: '', address: '', experience: '', periodType: '' }]);
   };
 
+  // Function to remove a work experience entry
   const removeWorkExperience = (index) => {
     if (initialData.workExperience.length === 1) {
-      return;
+      return; // Prevent removing the last work experience entry
     }
     const updatedWorkExperience = initialData.workExperience.filter((_, i) => i !== index);
     handleChange('workExperience', updatedWorkExperience);
   };
 
+  // Options for country codes
   const countryCodes = [
     { value: '+94', label: '+94 (Sri Lanka)' },
     { value: '+1', label: '+1 (USA/Canada)' },
@@ -43,6 +49,7 @@ const CVForm = ({
     { value: '+61', label: '+61 (Australia)' },
   ];
 
+  // Options for nationality
   const nationalityOptions = [
     { value: 'srilankan', label: 'Sri Lankan' },
     { value: 'american', label: 'American' },
@@ -50,12 +57,14 @@ const CVForm = ({
     { value: 'british', label: 'British' },
   ];
 
+  // Options for employment status
   const employmentStatusOptions = [
     { value: 'employed', label: 'Employed' },
     { value: 'unemployed', label: 'Unemployed' },
     { value: 'student', label: 'Student' },
   ];
 
+  // Options for preferred languages
   const languageOptions = [
     { value: 'sinhala', label: 'Sinhala' },
     { value: 'english', label: 'English' },
@@ -63,11 +72,11 @@ const CVForm = ({
     { value: 'spanish', label: 'Spanish' },
   ];
 
+  // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(initialData);
+    onSubmit(initialData); // Call onSubmit function passed as prop
   };
-
   return (
     <div>
       <form onSubmit={handleSubmit}>

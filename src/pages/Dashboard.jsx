@@ -1,30 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '../components';
-import { useStateContext } from '../contexts/ContextProvider';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Selection, Inject, Edit, Toolbar, Sort, Filter, Search } from '@syncfusion/ej2-react-grids';
-import { RiContactsLine } from 'react-icons/ri';
-import { Header } from '../components';
-import { MdWork } from 'react-icons/md';
-import { FaUserMinus, FaGraduationCap, FaLanguage } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react'; // Importing React and hooks
+import { Link } from 'react-router-dom'; // Importing Link for navigation
+import { Button } from '../components'; // Importing Button component
+import { useStateContext } from '../contexts/ContextProvider'; // Importing state context
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Selection, Inject, Edit, Toolbar, Sort, Filter, Search } from '@syncfusion/ej2-react-grids'; // Importing necessary components from Syncfusion Grid package
+import { RiContactsLine } from 'react-icons/ri'; // Importing icons
+import { Header } from '../components'; // Importing Header component
+import { MdWork } from 'react-icons/md'; // Importing icons
+import { FaUserMinus, FaGraduationCap, FaLanguage } from 'react-icons/fa'; // Importing icons
 
 const Dashboard = () => {
-  const { currentColor } = useStateContext();
-  const [cvData, setCvData] = useState([]);
-  const [totalCVs, setTotalCVs] = useState(0);
-  const [activeCVs, setActiveCVs] = useState(0);
-  const [recentCVs, setRecentCVs] = useState([]);
-  const [mostPreferredLanguage, setMostPreferredLanguage] = useState('');
+  const { currentColor } = useStateContext(); // Getting current color from state context
+  const [cvData, setCvData] = useState([]); // State for storing CV data
+  const [totalCVs, setTotalCVs] = useState(0); // State for total number of CVs
+  const [activeCVs, setActiveCVs] = useState(0); // State for active CVs count
+  const [recentCVs, setRecentCVs] = useState([]); // State for storing recent CV submissions
+  const [mostPreferredLanguage, setMostPreferredLanguage] = useState(''); // State for the most preferred language
 
+  // Effect hook to initialize dashboard data
   useEffect(() => {
-    const storedCvData = JSON.parse(localStorage.getItem('cvData')) || [];
-    setCvData(storedCvData);
-    setTotalCVs(storedCvData.length);
-    setActiveCVs(storedCvData.filter(cv => cv.isActive).length);
-    setRecentCVs(storedCvData.slice(-3).reverse());
-    setMostPreferredLanguage(findMostPreferredLanguage(storedCvData));
+    const storedCvData = JSON.parse(localStorage.getItem('cvData')) || []; // Retrieving stored CV data from localStorage
+    setCvData(storedCvData); // Setting CV data to state
+    setTotalCVs(storedCvData.length); // Setting total number of CVs
+    setActiveCVs(storedCvData.filter(cv => cv.isActive).length); // Setting count of active CVs
+    setRecentCVs(storedCvData.slice(-3).reverse()); // Setting recent CV submissions
+    setMostPreferredLanguage(findMostPreferredLanguage(storedCvData)); // Setting the most preferred language
   }, []);
 
+  // Function to find the most preferred language among CVs
   const findMostPreferredLanguage = (cvData) => {
     let languageCount = {};
     cvData.forEach(cv => {
@@ -36,6 +38,7 @@ const Dashboard = () => {
     return mostPreferred;
   };
 
+  // Function to render active status chip
   const renderActiveStatus = (isActive) => {
     return (
       <span className={`status-chip ${isActive ? 'active' : 'inactive'}`}>
@@ -44,6 +47,7 @@ const Dashboard = () => {
     );
   };
 
+  // Function to add unique IDs to CV data
   const addUniqueId = (cvData) => {
     return cvData.map((cv, index) => ({ ...cv, id: index }));
   };
@@ -54,18 +58,22 @@ const Dashboard = () => {
     setCvData(cvDataWithId);
   }, []);
 
+  // Function to render full name
   const renderFullName = (data) => {
     return `${data.firstName} ${data.lastName}`;
   };
 
+  // Grid columns configuration
   const gridColumns = [
     { field: 'fullName', headerText: 'Full Name', width: '200', textAlign: 'Center', template: renderFullName },
     { field: 'age', headerText: 'Age', width: '100', textAlign: 'Center' },
     { field: 'isActive', headerText: 'Status', width: '100', textAlign: 'Center', template: (data) => renderActiveStatus(data.isActive) },
   ];
 
+  // Editing settings for grid
   const editing = { allowDeleting: false, allowEditing: false };
 
+  // Dashboard data state
   const [dashData, setDashData] = useState([
     {
       icon: <MdWork />,
@@ -101,12 +109,14 @@ const Dashboard = () => {
     },
   ]);
 
+  // Effect hook to update dashboard data based on CV data changes
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('cvData')) || [];
+    const storedData = JSON.parse(localStorage.getItem('cvData')) || []; // Retrieving stored CV data from localStorage
 
-    const employedCount = storedData.filter(cv => cv.employmentStatus === 'employed').length;
-    const unemployedCount = storedData.filter(cv => cv.employmentStatus === 'unemployed').length;
-    const studentCount = storedData.filter(cv => cv.employmentStatus === 'student').length;
+    const employedCount = storedData.filter(cv => cv.employmentStatus === 'employed').length; // Count of employed CVs
+    const unemployedCount = storedData.filter(cv => cv.employmentStatus === 'unemployed').length; // Count of unemployed CVs
+    const studentCount = storedData.filter(cv => cv.employmentStatus === 'student').length; // Count of student
+
 
     setDashData(prevData => prevData.map(item => {
       if (item.title === 'Employed') {

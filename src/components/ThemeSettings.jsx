@@ -5,9 +5,12 @@ import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 import { useStateContext } from '../contexts/ContextProvider';
 
+// ThemeSettings component for rendering the theme settings panel
 const ThemeSettings = () => {
+  // Accessing state and context functions from context provider
   const { setColor, setMode, currentMode, currentColor, setThemeSettings } = useStateContext();
 
+  // Theme color options
   const themeColors = [
     {
       name: 'blue-theme',
@@ -35,10 +38,10 @@ const ThemeSettings = () => {
     },
   ];
 
-  
   return (
     <div className="bg-half-transparent w-screen fixed nav-item top-0 right-0">
       <div className="float-right h-screen dark:text-gray-200  bg-white dark:bg-[#484B52] w-400">
+        {/* Header */}
         <div className="flex justify-between items-center p-4 ml-4">
           <p className="font-semibold text-lg">Settings</p>
           <button
@@ -49,11 +52,10 @@ const ThemeSettings = () => {
           >
             <MdOutlineCancel />
           </button>
-
         </div>
+        {/* Theme options */}
         <div className="flex-col border-t-1 border-color p-4 ml-4">
           <p className="font-semibold text-xl ">Theme Option</p>
-
           <div className="mt-4">
             <input
               type="radio"
@@ -83,6 +85,7 @@ const ThemeSettings = () => {
             </label>
           </div>
         </div>
+        {/* Theme color options */}
         <div className="p-4 border-t-1 border-color ml-4">
           <p className="font-semibold text-xl ">Theme Colors</p>
           <div className="flex gap-3">

@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import CVForm from './CVForm';
-import { Header } from '../components';
-import { useStateContext } from '../contexts/ContextProvider';
+import React, { useState } from 'react'; // Importing React and hooks
+import CVForm from './CVForm'; // Importing the CVForm component
+import { Header } from '../components'; // Importing the Header component
+import { useStateContext } from '../contexts/ContextProvider'; // Importing context for state management
 
 const CVCreation = () => {
-  const { currentColor } = useStateContext();
-  const [initialData, setInitialData] = useState({
+  // Destructuring currentColor from context
+  const { currentColor } = useStateContext(); 
+
+  // Setting initial state for form data
+  const [initialData, setInitialData] = useState({ 
     firstName: '',
     lastName: '',
     age: '',
@@ -18,26 +21,31 @@ const CVCreation = () => {
     preferredLanguages: [],
     workExperience: [{ place: '', address: '', experience: '', periodType: '' }]
   });
-  const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState('');
 
+  // State to track form errors
+  const [errors, setErrors] = useState({}); 
+
+  // State to show success message
+  const [successMessage, setSuccessMessage] = useState(''); 
+
+  // Function to handle form submission
   const handleSubmit = (cvData) => {
     console.log('Creating CV', cvData);
-    const phoneNumberWithCountryCode = `${cvData.countryCode} ${cvData.phoneNumber}`;
+    const phoneNumberWithCountryCode = `${cvData.countryCode} ${cvData.phoneNumber}`; // Formatting phone number
     const formattedData = {
       ...cvData,
       phoneNumber: phoneNumberWithCountryCode,
-      dateOfBirth: formatDate(cvData.dateOfBirth)
+      dateOfBirth: formatDate(cvData.dateOfBirth) // Formatting date of birth
     };
-    const existingData = JSON.parse(localStorage.getItem('cvData')) || [];
-    existingData.push(formattedData);
-    localStorage.setItem('cvData', JSON.stringify(existingData));
-    setSuccessMessage('CV submitted successfully!');
-    setTimeout(() => setSuccessMessage(''), 3000);
-    clearForm();
+    const existingData = JSON.parse(localStorage.getItem('cvData')) || []; // Retrieving existing CV data from localStorage
+    existingData.push(formattedData); // Adding new CV data
+    localStorage.setItem('cvData', JSON.stringify(existingData)); // Saving updated CV data to localStorage
+    setSuccessMessage('CV submitted successfully!'); // Setting success message
+    setTimeout(() => setSuccessMessage(''), 3000); // Clearing success message after 3 seconds
+    clearForm(); // Clearing form data
   };
-  
 
+  // Function to validate the form data
   const validateForm = (formData) => {
     const newErrors = {};
     if (!formData.firstName) newErrors.firstName = 'First name is required';
@@ -48,7 +56,6 @@ const CVCreation = () => {
     if (!formData.phoneNumber || !phoneNumberRegex.test(formData.phoneNumber)) {
       newErrors.phoneNumber = 'Invalid phone number. It should contain 9 to 10 digits.';
     }
-    
     if (!formData.nationality.length) newErrors.nationality = 'Nationality is required';
     if (!formData.employmentStatus.length) newErrors.employmentStatus = 'Employment Status is required';
     if (!formData.preferredLanguages.length) newErrors.preferredLanguages = 'Preferred languages are required';
@@ -68,16 +75,17 @@ const CVCreation = () => {
     }
   
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0; // Return true if there are no errors
   };
-  
 
+  // Function to handle form submission
   const handleFormSubmit = (formData) => {
     if (validateForm(formData)) {
       handleSubmit(formData);
     }
   };
 
+  // Function to clear the form data
   const clearForm = () => {
     setInitialData({
       firstName: '',
@@ -94,6 +102,7 @@ const CVCreation = () => {
     });
   };
 
+  // Function to format the date to 'YYYY-MM-DD'
   const formatDate = (date) => {
     const d = new Date(date);
     let month = '' + (d.getMonth() + 1);
@@ -106,12 +115,11 @@ const CVCreation = () => {
       day = '0' + day;
   
     return [year, month, day].join('-');
-  }
-  
+  };
 
   return (
-    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl" style={{ boxShadow: '0 4px 18px rgba(0, 0, 0, 0.05)' }}>
-      <Header category="Page" title="Create CV" />
+    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl" style={{ boxShadow: '0 4px 18px rgba(0, 0, 0, 0.05)' }}> {/* Container for the CV creation page */}
+      <Header category="Page" title="Create CV" /> {/* Header component */}
       <CVForm
         initialData={initialData}
         onSubmit={handleFormSubmit}
@@ -119,9 +127,9 @@ const CVCreation = () => {
         successMessage={successMessage}
         setInitialData={setInitialData}
         currentColor={currentColor}
-      />
+      /> {/* CVForm component with props */}
     </div>
   );
 };
 
-export default CVCreation;
+export default CVCreation; // Exporting the CVCreation component as default
