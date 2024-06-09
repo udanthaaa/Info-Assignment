@@ -8,6 +8,7 @@
     "@emotion/styled": "^11.11.5",
     "@syncfusion/ej2-charts": "^25.2.6",
     "@syncfusion/ej2-react-charts": "^25.2.6",
+    "@syncfusion/ej2-react-grids": "^25.2.7",
     "@syncfusion/ej2-react-popups": "^25.2.7",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -22,6 +23,7 @@
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
     "react-select": "^5.8.0",
+    "react-switch": "^7.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

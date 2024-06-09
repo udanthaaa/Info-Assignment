@@ -1,131 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './Styles/CVForm.css';
-import { useStateContext } from '../contexts/ContextProvider';
+import Switch from 'react-switch';
 
-const CVForm = ({ onSubmit, initialData }) => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [age, setAge] = useState('');
-    const [address, setAddress] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [dateOfBirth, setDateOfBirth] = useState(null);
-    const [isActive, setIsActive] = useState(false);
-    const [nationality, setNationality] = useState('');
-    const [employmentStatus, setEmploymentStatus] = useState('');
-    const [termsAccepted, setTermsAccepted] = useState(false);
-    const [preferredLanguages, setPreferredLanguages] = useState([]);
-    const [workExperience, setWorkExperience] = useState([{ place: '', address: '', experience: '', periodType: '' }]);
-    const [errors, setErrors] = useState({});
-    const [successMessage, setSuccessMessage] = useState('');
-    const { currentColor } = useStateContext();
-  
-    useEffect(() => {
-      if (initialData) {
-        setFirstName(initialData.firstName || '');
-        setLastName(initialData.lastName || '');
-        setAge(initialData.age || '');
-        setAddress(initialData.address || '');
-        setPhoneNumber(initialData.phoneNumber || '');
-        setDateOfBirth(initialData.dateOfBirth || null);
-        setIsActive(initialData.isActive || false);
-        setNationality(initialData.nationality || '');
-        setEmploymentStatus(initialData.employmentStatus || '');
-        setTermsAccepted(initialData.termsAccepted || false);
-        setPreferredLanguages(initialData.preferredLanguages || []);
-        setWorkExperience(initialData.workExperience || [{ place: '', address: '', experience: '', periodType: '' }]);
-      }
-    }, [initialData]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-        const formattedData = {
-            firstName,
-            lastName,
-            age: parseInt(age, 10),
-            address,
-            phoneNumber,
-            dateOfBirth: dateOfBirth ? dateOfBirth.toISOString().split('T')[0] : '',
-            isActive,
-            nationality,
-            employmentStatus,
-            preferredLanguages,
-            workExperience
-          };
-
-      const existingData = JSON.parse(localStorage.getItem('cvData')) || [];
-      existingData.push(formattedData);
-      localStorage.setItem('cvData', JSON.stringify(existingData));
-
-      onSubmit(formattedData);
-      setSuccessMessage('CV submitted successfully!');
-      setTimeout(() => setSuccessMessage(''), 3000);
-      clearForm();
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!firstName) newErrors.firstName = 'First name is required';
-    if (!lastName) newErrors.lastName = 'Last name is required';
-    if (!age || age < 0) newErrors.age = 'Age is required and cannot be lower than 0';
-    if (!address) newErrors.address = 'Address is required';
-    if (!phoneNumber || !/^\+?\d+$/.test(phoneNumber)) newErrors.phoneNumber = 'Invalid phone number';
-    if (!preferredLanguages.length) newErrors.preferredLanguages = 'Preferred languages are required';
-    if (workExperience.some(exp => !exp.place || !exp.address || !exp.experience || !exp.periodType)) {
-      newErrors.workExperience = 'All work experience fields are required';
-    }
-
-    if (dateOfBirth) {
-      const birthYear = dateOfBirth.getFullYear();
-      const currentYear = new Date().getFullYear();
-      const calculatedAge = currentYear - birthYear;
-      if (age !== calculatedAge.toString()) {
-        newErrors.age = 'Age does not match the date of birth';
-      }
-    } else {
-      newErrors.age = 'Date of birth is required to calculate age';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const clearForm = () => {
-    setFirstName('');
-    setLastName('');
-    setAge('');
-    setAddress('');
-    setPhoneNumber('');
-    setDateOfBirth(null);
-    setIsActive(false);
-    setNationality('');
-    setEmploymentStatus('');
-    setTermsAccepted(false);
-    setPreferredLanguages([]);
-    setWorkExperience([{ place: '', address: '', experience: '', periodType: '' }]);
+const CVForm = ({
+  initialData,
+  onSubmit,
+  errors,
+  successMessage,
+  setInitialData,
+  currentColor
+}) => {
+  const handleChange = (field, value) => {
+    setInitialData(prevData => ({ ...prevData, [field]: value }));
   };
 
   const handleWorkExperienceChange = (index, field, value) => {
-    const updatedWorkExperience = [...workExperience];
+    const updatedWorkExperience = [...initialData.workExperience];
     updatedWorkExperience[index][field] = value;
-    setWorkExperience(updatedWorkExperience);
+    handleChange('workExperience', updatedWorkExperience);
   };
 
   const addWorkExperience = () => {
-    setWorkExperience([...workExperience, { place: '', address: '', experience: '', periodType: '' }]);
+    handleChange('workExperience', [...initialData.workExperience, { place: '', address: '', experience: '', periodType: '' }]);
   };
 
   const removeWorkExperience = (index) => {
-    if (workExperience.length === 1) {
-      // Prevent deleting the last work experience
+    if (initialData.workExperience.length === 1) {
       return;
     }
-    const updatedWorkExperience = workExperience.filter((_, i) => i !== index);
-    setWorkExperience(updatedWorkExperience);
+    const updatedWorkExperience = initialData.workExperience.filter((_, i) => i !== index);
+    handleChange('workExperience', updatedWorkExperience);
   };
 
   const nationalityOptions = [
@@ -148,58 +55,72 @@ const CVForm = ({ onSubmit, initialData }) => {
     { value: 'spanish', label: 'Spanish' },
   ];
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(initialData);
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <div>
           <label>First Name:</label>
-          <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+          <input type="text" value={initialData.firstName} onChange={(e) => handleChange('firstName', e.target.value)} />
           {errors.firstName && <span className="error">{errors.firstName}</span>}
         </div>
         <div>
           <label>Last Name:</label>
-          <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          <input type="text" value={initialData.lastName} onChange={(e) => handleChange('lastName', e.target.value)} />
           {errors.lastName && <span className="error">{errors.lastName}</span>}
         </div>
         <div>
           <label>Age:</label>
-          <input type="number" value={age} onChange={(e) => setAge(e.target.value)} />
+          <input type="number" value={initialData.age} onChange={(e) => handleChange('age', e.target.value)} />
           {errors.age && <span className="error">{errors.age}</span>}
         </div>
         <div>
           <label>Address:</label>
-          <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+          <input type="text" value={initialData.address} onChange={(e) => handleChange('address', e.target.value)} />
           {errors.address && <span className="error">{errors.address}</span>}
         </div>
         <div>
           <label>Phone Number:</label>
-          <input type="text" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+          <input type="text" value={initialData.phoneNumber} onChange={(e) => handleChange('phoneNumber', e.target.value)} />
           {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
         </div>
         <div>
           <label>Date of Birth: </label>
-          <DatePicker selected={dateOfBirth} onChange={(date) => setDateOfBirth(date)} />
+          <DatePicker selected={initialData.dateOfBirth} onChange={(date) => handleChange('dateOfBirth', date)} />
         </div>
-        <div>
+        <div className="flex items-center space-x-2">
           <label>Is Active: </label>
-          <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+          <Switch
+            onChange={(checked) => handleChange('isActive', checked)}
+            checked={initialData.isActive}
+            height={20}
+            width={40}
+            onColor="#00D084"
+            offColor="#888"
+          />
         </div>
         <div>
           <label>Nationality:</label>
-          <Select options={nationalityOptions} value={nationalityOptions.find(option => option.value === nationality)} onChange={(option) => setNationality(option.label)} />
+          <Select options={nationalityOptions} value={nationalityOptions.find(option => option.value === initialData.nationality)} onChange={(option) => handleChange('nationality', option.value)} />
+          {errors.nationality && <span className="error">{errors.nationality}</span>}
         </div>
         <div>
           <label>Employment Status:</label>
-          <Select options={employmentStatusOptions} value={employmentStatusOptions.find(option => option.value === employmentStatus)} onChange={(option) => setEmploymentStatus(option.label)} />
+          <Select options={employmentStatusOptions} value={employmentStatusOptions.find(option => option.value === initialData.employmentStatus)} onChange={(option) => handleChange('employmentStatus', option.value)} />
+          {errors.employmentStatus && <span className="error">{errors.employmentStatus}</span>}
         </div>
         <div>
           <label>Preferred Languages:</label>
-          <Select isMulti options={languageOptions} value={languageOptions.filter(option => preferredLanguages.includes(option.value))} onChange={(options) => setPreferredLanguages(options.map(option => option.label))} />
+          <Select isMulti options={languageOptions} value={languageOptions.filter(option => initialData.preferredLanguages.includes(option.value))} onChange={(options) => handleChange('preferredLanguages', options.map(option => option.value))} />
           {errors.preferredLanguages && <span className="error">{errors.preferredLanguages}</span>}
         </div>
         <div>
           <label>Work Experience:</label>
-          {workExperience.map((exp, index) => (
+          {initialData.workExperience.map((exp, index) => (
             <div key={index} className="space-y-2">
               <input
                 type="text"
@@ -229,13 +150,13 @@ const CVForm = ({ onSubmit, initialData }) => {
                 onChange={(e) => handleWorkExperienceChange(index, 'periodType', e.target.value)}
                 className="w-full border rounded px-2 py-1"
               />
-              {workExperience.length > 1 && (
+              {initialData.workExperience.length > 1 && (
                 <div className="flex space-x-2 mt-2">
-                    <button type="button" onClick={() => removeWorkExperience(index)} className="px-4 py-2 bg-red-500 text-white rounded"> Remove </button>
+                  <button type="button" onClick={() => removeWorkExperience(index)} className="px-4 py-2 bg-red-500 text-white rounded"> Remove </button>
                 </div>
-                )}
+              )}
               <div className="mb-2"></div>
-              {index === workExperience.length - 1 && (
+              {index === initialData.workExperience.length - 1 && (
                 <div className="flex space-x-2 mt-2">
                   <button
                     type="button"
@@ -251,10 +172,10 @@ const CVForm = ({ onSubmit, initialData }) => {
         </div>
         <div>
           <label>Terms and Conditions: </label>
-          <input type="checkbox" checked={termsAccepted} onChange={((e) => setTermsAccepted(e.target.checked))} />
+          <input type="checkbox" checked={initialData.termsAccepted} onChange={((e) => handleChange('termsAccepted', e.target.checked))} />
           {errors.termsAccepted && <span className="error">{errors.termsAccepted}</span>}
         </div>
-        <button type="submit" style={{ backgroundColor: termsAccepted ? currentColor : 'lightgray' }} className="hover:drop-shadow-xl"  disabled={!termsAccepted}>Submit</button>
+        <button type="submit" style={{ backgroundColor: initialData.termsAccepted ? currentColor : 'lightgray' }} className="hover:drop-shadow-xl"  disabled={!initialData.termsAccepted}>Submit</button>
       </form>
       {successMessage && <div className="success-popup">{successMessage}</div>}
     </div>
@@ -262,4 +183,3 @@ const CVForm = ({ onSubmit, initialData }) => {
 };
 
 export default CVForm;
-

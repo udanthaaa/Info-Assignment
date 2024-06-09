@@ -5,6 +5,10 @@ import { useStateContext } from '../contexts/ContextProvider';
 import { GridComponent, ColumnsDirective, ColumnDirective, Page, Selection, Inject, Edit, Toolbar, Sort, Filter, Search } from '@syncfusion/ej2-react-grids';
 import { RiContactsLine } from 'react-icons/ri';
 import { Header } from '../components';
+import { MdOutlineSupervisorAccount } from 'react-icons/md';
+import { BsBoxSeam } from 'react-icons/bs';
+import { FiBarChart } from 'react-icons/fi';
+import { HiOutlineRefresh } from 'react-icons/hi';
 
 const Dashboard = () => {
   const { currentColor, currentMode } = useStateContext();
@@ -44,6 +48,46 @@ const Dashboard = () => {
   ];
 
   const editing = { allowDeleting: false, allowEditing: false };
+
+  const earningData = [
+    {
+      icon: <MdOutlineSupervisorAccount />,
+      amount: '39,354',
+      percentage: '-4%',
+      title: 'Customers',
+      iconColor: '#03C9D7',
+      iconBg: '#E5FAFB',
+      pcColor: 'red-600',
+    },
+    {
+      icon: <BsBoxSeam />,
+      amount: '4,396',
+      percentage: '+23%',
+      title: 'Products',
+      iconColor: 'rgb(255, 244, 229)',
+      iconBg: 'rgb(254, 201, 15)',
+      pcColor: 'green-600',
+    },
+    {
+      icon: <FiBarChart />,
+      amount: '423,39',
+      percentage: '+38%',
+      title: 'Sales',
+      iconColor: 'rgb(228, 106, 118)',
+      iconBg: 'rgb(255, 244, 229)',
+  
+      pcColor: 'green-600',
+    },
+    {
+      icon: <HiOutlineRefresh />,
+      amount: '39,354',
+      percentage: '-12%',
+      title: 'Refunds',
+      iconColor: 'rgb(0, 194, 146)',
+      iconBg: 'rgb(235, 250, 242)',
+      pcColor: 'red-600',
+    },
+  ];
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl"
