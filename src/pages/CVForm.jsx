@@ -35,6 +35,14 @@ const CVForm = ({
     handleChange('workExperience', updatedWorkExperience);
   };
 
+  const countryCodes = [
+    { value: '+94', label: '+94 (Sri Lanka)' },
+    { value: '+1', label: '+1 (USA/Canada)' },
+    { value: '+44', label: '+44 (UK)' },
+    { value: '+91', label: '+91 (India)' },
+    { value: '+61', label: '+61 (Australia)' },
+  ];
+
   const nationalityOptions = [
     { value: 'srilankan', label: 'Sri Lankan' },
     { value: 'american', label: 'American' },
@@ -82,6 +90,14 @@ const CVForm = ({
           <label>Address:</label>
           <input type="text" value={initialData.address} onChange={(e) => handleChange('address', e.target.value)} />
           {errors.address && <span className="error">{errors.address}</span>}
+        </div>
+        <div>
+          <label>Country Code:</label>
+          <Select 
+            options={countryCodes} 
+            value={countryCodes.find(option => option.value === initialData.countryCode)} 
+            onChange={(option) => handleChange('countryCode', option.value)} 
+          />
         </div>
         <div>
           <label>Phone Number:</label>
@@ -137,19 +153,27 @@ const CVForm = ({
                 className="w-full border rounded px-2 py-1"
               />
               <input
-                type="text"
+                type="number"
                 placeholder="Number of experience"
                 value={exp.experience}
                 onChange={(e) => handleWorkExperienceChange(index, 'experience', e.target.value)}
                 className="w-full border rounded px-2 py-1"
               />
-              <input
-                type="text"
-                placeholder="Period type"
+              <select
                 value={exp.periodType}
                 onChange={(e) => handleWorkExperienceChange(index, 'periodType', e.target.value)}
                 className="w-full border rounded px-2 py-1"
-              />
+              >
+                <option value="">Select Period Type</option>
+                <option value="6 months">Less than 1 Year</option>
+                <option value="1 year">1 year</option>
+                <option value="2 years">2 years</option>
+                <option value="3 years">3 years</option>
+                <option value="4 years">4 years</option>
+                <option value="5 years">5 years</option>
+                <option value="5 years+">5 years +</option>
+              </select>
+
               {initialData.workExperience.length > 1 && (
                 <div className="flex space-x-2 mt-2">
                   <button type="button" onClick={() => removeWorkExperience(index)} className="px-4 py-2 bg-red-500 text-white rounded"> Remove </button>

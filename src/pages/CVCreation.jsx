@@ -23,8 +23,10 @@ const CVCreation = () => {
 
   const handleSubmit = (cvData) => {
     console.log('Creating CV', cvData);
+    const phoneNumberWithCountryCode = `${cvData.countryCode} ${cvData.phoneNumber}`;
     const formattedData = {
       ...cvData,
+      phoneNumber: phoneNumberWithCountryCode,
       dateOfBirth: formatDate(cvData.dateOfBirth)
     };
     const existingData = JSON.parse(localStorage.getItem('cvData')) || [];
@@ -42,14 +44,18 @@ const CVCreation = () => {
     if (!formData.lastName) newErrors.lastName = 'Last name is required';
     if (!formData.age || formData.age < 0) newErrors.age = 'Age is required and cannot be lower than 0';
     if (!formData.address) newErrors.address = 'Address is required';
-    if (!formData.phoneNumber || !/^\+?\d+$/.test(formData.phoneNumber)) newErrors.phoneNumber = 'Invalid phone number';
+    const phoneNumberRegex = /^[0-9]{9,10}$/;
+    if (!formData.phoneNumber || !phoneNumberRegex.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = 'Invalid phone number. It should contain 9 to 10 digits.';
+    }
+    
     if (!formData.nationality.length) newErrors.nationality = 'Nationality is required';
     if (!formData.employmentStatus.length) newErrors.employmentStatus = 'Employment Status is required';
     if (!formData.preferredLanguages.length) newErrors.preferredLanguages = 'Preferred languages are required';
     if (formData.workExperience.some(exp => !exp.place || !exp.address || !exp.experience || !exp.periodType)) {
       newErrors.workExperience = 'All work experience fields are required';
     }
-
+  
     if (formData.dateOfBirth) {
       const birthYear = formData.dateOfBirth.getFullYear();
       const currentYear = new Date().getFullYear();
@@ -60,10 +66,11 @@ const CVCreation = () => {
     } else {
       newErrors.age = 'Date of birth is required to calculate age';
     }
-
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
 
   const handleFormSubmit = (formData) => {
     if (validateForm(formData)) {

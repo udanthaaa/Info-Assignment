@@ -48,7 +48,8 @@ const CVView = () => {
             <div key={index} className="mt-4">
               <h4 className="font-bold">{exp.place}</h4>
               <p className="text-sm text-gray-600">{exp.address}</p>
-              <p className="mt-1">{exp.experience} {exp.periodType}</p>
+              <p className="text-sm text-gray-600">{exp.experience} </p>
+              <p className="text-sm text-gray-600">{exp.periodType}</p>
             </div>
           ))}
         </div>

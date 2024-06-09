@@ -16,23 +16,31 @@ const CVEdit = () => {
     const cvDataWithId = storedData.map((cv, index) => ({ ...cv, id: index }));
     const cvToEdit = cvDataWithId.find(cv => cv.id === parseInt(id));
     if (cvToEdit) {
-      cvToEdit.dateOfBirth = new Date(cvToEdit.dateOfBirth); // Convert string to Date object
+      // Separate country code and phone number
+      const [countryCode, phoneNumber] = cvToEdit.phoneNumber.split(' ');
+      cvToEdit.phoneNumber = phoneNumber;
+      cvToEdit.countryCode = countryCode;
+      cvToEdit.dateOfBirth = new Date(cvToEdit.dateOfBirth);
     }
     setCv(cvToEdit);
   }, [id]);
 
   const handleEdit = (editedData) => {
     if (validateForm(editedData)) {
+      editedData.phoneNumber = `${editedData.countryCode} ${editedData.phoneNumber}`;
       const storedData = JSON.parse(localStorage.getItem('cvData')) || [];
       const updatedData = storedData.map((cv, index) => {
         if (index === parseInt(id)) {
-          return { ...editedData, id: index };
+          return { ...editedData, id: index, dateOfBirth: formatDate(editedData.dateOfBirth) };
         }
         return cv;
       });
       localStorage.setItem('cvData', JSON.stringify(updatedData));
       setSuccessMessage('CV edited successfully!');
-      setTimeout(() => setSuccessMessage(''), 3000);
+      setTimeout(() => {
+        setSuccessMessage('');
+        window.location.href = '/manage-cvs';
+      }, 300);
       setCv(editedData);
     }
   };
@@ -47,14 +55,19 @@ const CVEdit = () => {
     if (!formData.lastName) newErrors.lastName = 'Last name is required';
     if (!formData.age || formData.age < 0) newErrors.age = 'Age is required and cannot be lower than 0';
     if (!formData.address) newErrors.address = 'Address is required';
-    if (!formData.phoneNumber || !/^\+?\d+$/.test(formData.phoneNumber)) newErrors.phoneNumber = 'Invalid phone number';
+  
+    const phoneNumberRegex = /^[0-9]{9,10}$/;
+    if (!formData.phoneNumber || !phoneNumberRegex.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = 'Invalid phone number. It should contain 9 to 10 digits.';
+    }
+    
     if (!formData.nationality.length) newErrors.nationality = 'Nationality is required';
     if (!formData.employmentStatus.length) newErrors.employmentStatus = 'Employment Status is required';
     if (!formData.preferredLanguages.length) newErrors.preferredLanguages = 'Preferred languages are required';
     if (formData.workExperience.some(exp => !exp.place || !exp.address || !exp.experience || !exp.periodType)) {
       newErrors.workExperience = 'All work experience fields are required';
     }
-
+  
     if (formData.dateOfBirth) {
       const birthYear = formData.dateOfBirth.getFullYear();
       const currentYear = new Date().getFullYear();
@@ -65,10 +78,26 @@ const CVEdit = () => {
     } else {
       newErrors.age = 'Date of birth is required to calculate age';
     }
-
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
+
+  // Function to format date to yyyy-mm-dd
+  const formatDate = (date) => {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+  
+    if (month.length < 2) 
+      month = '0' + month;
+    if (day.length < 2) 
+      day = '0' + day;
+  
+    return [year, month, day].join('-');
+  }
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl" style={{ boxShadow: '0 4px 18px rgba(0, 0, 0, 0.05)' }}>
